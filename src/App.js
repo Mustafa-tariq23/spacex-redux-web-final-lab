@@ -1,25 +1,63 @@
-import logo from './logo.svg';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchMissionsApi } from './features/missionsSlice';
+import { fetchRocketsApi } from './features/rocketSlice';
+import Rockets from './components/Rockets';
+import Missions from './components/Missions';
+import Profile from './components/Profile';
 import './App.css';
 
-function App() {
+const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchMissionsApi());
+    dispatch(fetchRocketsApi());
+  }, [dispatch]);
+
+  const missions = useSelector((state) => state.missionsReducer);
+  const rockets = useSelector((state) => state.rocketReducer);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="app-container">
+        <nav>
+          <ul className="header-ul" style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem'}}>
+            <li>
+              <NavLink activeClassName="active" to="/rockets">
+                Rockets
+              </NavLink>
+            </li>
+            <li>
+              <NavLink activeClassName="active" to="/missions">
+                Missions
+              </NavLink>
+            </li>
+            <li>
+              <NavLink activeClassName="active" to="/my-profile">
+                My Profile
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+        <Routes>
+          <Route
+            path="/rockets"
+            element={<Rockets rockets={rockets} />}
+          />
+          <Route
+            path="/missions"
+            element={<Missions missions={missions} />}
+          />
+          <Route
+            path="/my-profile"
+            element={<Profile />}
+          />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
